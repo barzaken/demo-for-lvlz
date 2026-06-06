@@ -1,39 +1,127 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { LvlzPostList } from "@lvlz/sdk/react";
-import { lvlz } from "@/lib/lvlz";
+import { siteConfig } from "@/lib/site";
 
-export const revalidate = 100;
+export const revalidate = 600;
 
-export default async function Home() {
-  const posts = lvlz ? (await lvlz.getPosts({ limit: 6 })).posts : [];
+export const metadata: Metadata = {
+  title: siteConfig.title,
+  description: siteConfig.description,
+  openGraph: {
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
+  alternates: {
+    canonical: siteConfig.url,
+  },
+};
 
+const features = [
+  {
+    title: "SEO / GEO",
+    description:
+      "Posts render as server HTML with BlogPosting JSON-LD — visible to Google and AI crawlers.",
+  },
+  {
+    title: "SSR + ISR",
+    description:
+      "Posts are fetched at build time and revalidated every 10 minutes. Fast, fresh, cacheable.",
+  },
+  {
+    title: "Rich posts",
+    description:
+      "Real slugs, cover images, and inline images from the LVLZ editor — rendered via LvlzArticle.",
+  },
+];
+
+export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 py-16">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-semibold tracking-tight">Simple Project</h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">
-          A Next.js site powered by LVLZ.ai blog posts.
-        </p>
-        <Link
-          href="/blog"
-          className="inline-flex h-11 w-fit items-center justify-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-        >
-          View Blog
-        </Link>
-      </div>
-
-      <section className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Latest posts</h2>
-        {!lvlz ? (
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Add <code className="font-mono text-sm">LVLZ_KEY</code> to{" "}
-            <code className="font-mono text-sm">.env.local</code> to load posts.
+    <main>
+      <section>
+        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 py-20 sm:py-28">
+          <p className="text-sm font-medium text-accent">@lvlz/sdk demo</p>
+          <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+            Publish SEO blog posts on your domain
+          </h1>
+          <p className="max-w-xl text-lg text-muted">
+            This site is a live demo of the LVLZ Website SDK. Posts are
+            generated in lvlz.ai and rendered here with server-side React
+            components.
           </p>
-        ) : posts.length === 0 ? (
-          <p className="text-zinc-600 dark:text-zinc-400">No posts yet.</p>
-        ) : (
-          <LvlzPostList posts={posts} />
-        )}
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/blog"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-accent px-5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            >
+              View Blog
+            </Link>
+            <a
+              href="https://lvlz.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-border bg-background px-5 text-sm font-medium shadow-sm transition-colors hover:bg-surface"
+            >
+              Go to lvlz.ai
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <h2 className="mb-10 text-2xl font-semibold tracking-tight">
+            Why server-render?
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="flex flex-col gap-3 rounded-xl border border-border bg-background p-6 shadow-sm"
+              >
+                <h3 className="font-medium">{feature.title}</h3>
+                <p className="text-sm leading-relaxed text-muted">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border">
+        <div className="mx-auto flex max-w-5xl flex-col items-start gap-6 px-6 py-20">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Ready to publish?
+          </h2>
+          <p className="max-w-lg text-muted">
+            Create SEO-optimized content in LVLZ, connect your site with a
+            publishable API key, and ship posts to your domain in minutes.
+          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <a
+              href="https://lvlz.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-accent px-5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            >
+              Get started on lvlz.ai
+            </a>
+            <Link
+              href="/blog"
+              className="text-sm text-muted transition-colors hover:text-foreground"
+            >
+              See live blog output →
+            </Link>
+          </div>
+        </div>
       </section>
     </main>
   );

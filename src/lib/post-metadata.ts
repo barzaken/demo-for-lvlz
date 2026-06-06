@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import type { PublicPost } from "@lvlz/sdk";
+import { getMetadataBase, siteConfig } from "@/lib/site";
 
 function getSiteUrl(): URL {
-  const url =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000");
-  return new URL(url);
+  return getMetadataBase();
 }
 
 function getPostImage(post: PublicPost): string | undefined {
@@ -53,7 +49,7 @@ export function buildPostMetadata(post: PublicPost): Metadata {
       description,
       type: "article",
       url: postUrl,
-      siteName: "Simple Project",
+      siteName: siteConfig.name,
       publishedTime: post.publishedAt ?? undefined,
       modifiedTime: post.updatedAt,
       images,
