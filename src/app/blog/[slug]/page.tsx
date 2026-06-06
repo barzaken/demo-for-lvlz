@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { LvlzArticle } from "@lvlz/sdk/react";
 import { lvlz } from "@/lib/lvlz";
+import { buildPostMetadata } from "@/lib/post-metadata";
 
 export const revalidate = 600;
 
@@ -20,24 +20,14 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   if (!lvlz) return {};
 
   const post = await lvlz.getPost(slug);
   if (!post) return {};
 
-  return {
-    title: post.title,
-    description: post.description ?? post.excerpt ?? undefined,
-    keywords: post.keywords,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      type: "article",
-      ...(post.coverImage ? { images: [{ url: post.coverImage }] } : {}),
-    },
-  };
+  return buildPostMetadata(post);
 }
 
 export default async function PostPage({ params }: PageProps) {
